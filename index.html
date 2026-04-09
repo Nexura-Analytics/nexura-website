@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#020a18">
+    <meta name="description" content="Nexura Analytics - Transform Data Into Strategic Power">
     <title>Nexura Analytics | Data Intelligence Reimagined</title>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" as="style">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -593,6 +595,34 @@
             
             /* Disable animated borders */
             .animated-border::before { display: none !important; }
+            
+            /* Disable parallax */
+            .parallax-layer { transform: none !important; }
+            
+            /* Faster transitions */
+            * {
+                transition-duration: 0.15s !important;
+            }
+        }
+        
+        /* PERFORMANCE: GPU acceleration for critical elements */
+        .glass, .card-3d, .magnetic-btn {
+            transform: translateZ(0);
+            will-change: auto;
+        }
+        
+        /* PERFORMANCE: Disable hover effects on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .float { animation: none !important; }
+            .pulse-glow { animation: none !important; }
+            .rotate-slow { animation: none !important; }
+            .logo-loop-list { animation-duration: 80s !important; }
+            
+            /* Reduce all transitions */
+            *, *::before, *::after {
+                transition-duration: 0.1s !important;
+                animation-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
@@ -1732,20 +1762,27 @@
             cursor.style.display = 'none';
         }
 
-        // Scroll Reveal Animation
+        // Scroll Reveal Animation - throttled for performance
         const revealElements = document.querySelectorAll('.reveal');
+        let revealTicking = false;
+        
         const revealOnScroll = () => {
-            revealElements.forEach(element => {
-                const elementTop = element.getBoundingClientRect().top;
-                const windowHeight = window.innerHeight;
-                
-                if (elementTop < windowHeight - 100) {
-                    element.classList.add('active');
-                }
-            });
+            if (!revealTicking) {
+                requestAnimationFrame(() => {
+                    revealElements.forEach(element => {
+                        const elementTop = element.getBoundingClientRect().top;
+                        const windowHeight = window.innerHeight;
+                        if (elementTop < windowHeight - 100) {
+                            element.classList.add('active');
+                        }
+                    });
+                    revealTicking = false;
+                });
+                revealTicking = true;
+            }
         };
 
-        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('scroll', revealOnScroll, { passive: true });
         revealOnScroll();
 
         // Counter Animation
@@ -1799,31 +1836,38 @@
             });
         });
 
-        // Navbar Background on Scroll
+        // Navbar Background on Scroll - throttled
         const navbar = document.getElementById('navbar');
+        let scrollTicking = false;
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
-                navbar.classList.add('glass-strong');
-            } else {
-                navbar.classList.remove('glass-strong');
+            if (!scrollTicking) {
+                requestAnimationFrame(() => {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('glass-strong');
+                    } else {
+                        navbar.classList.remove('glass-strong');
+                    }
+                    scrollTicking = false;
+                });
+                scrollTicking = true;
             }
-        });
+        }, { passive: true });
 
-        // Magnetic Button Effect
-        const magneticBtns = document.querySelectorAll('.magnetic-btn');
-        magneticBtns.forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                
-                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+        // Magnetic Button Effect - DISABLED on mobile
+        if (!isLowEnd) {
+            const magneticBtns = document.querySelectorAll('.magnetic-btn');
+            magneticBtns.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translate(0, 0)';
+                });
             });
-
-            btn.addEventListener('mouseleave', () => {
-                btn.style.transform = 'translate(0, 0)';
-            });
-        });
+        }
 
         // Form Submission
         document.getElementById('contact-form').addEventListener('submit', (e) => {
@@ -1854,24 +1898,23 @@
             e.target.reset();
         });
 
-        // 3D Card Tilt Effect
-        const cards3D = document.querySelectorAll('.card-3d');
-        cards3D.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width;
-                const y = (e.clientY - rect.top) / rect.height;
-                
-                const rotateX = (y - 0.5) * -15;
-                const rotateY = (x - 0.5) * 15;
-                
-                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+        // 3D Card Tilt Effect - DISABLED on mobile
+        if (!isLowEnd) {
+            const cards3D = document.querySelectorAll('.card-3d');
+            cards3D.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width;
+                    const y = (e.clientY - rect.top) / rect.height;
+                    const rotateX = (y - 0.5) * -15;
+                    const rotateY = (x - 0.5) * 15;
+                    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+                });
             });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
-            });
-        });
+        }
 
         // Typing Effect for Hero (Optional Enhancement)
         const heroTitle = document.querySelector('#home h1');
