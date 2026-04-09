@@ -11,9 +11,13 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
     
     <script>
+        // Performance detection - disable heavy effects on mobile
+        const isLowEnd = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                         || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+        
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -120,7 +124,7 @@
             border-radius: 4px;
         }
 
-        /* Three.js Canvas */
+        /* Three.js Canvas - only on desktop */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -130,8 +134,13 @@
             z-index: 0;
             pointer-events: none;
         }
+        
+        /* Disable Three.js on mobile */
+        @media (max-width: 768px) {
+            #bg-canvas { display: none !important; }
+        }
 
-        /* Liquid Ether Canvas */
+        /* Liquid Ether Canvas - lightweight mode on mobile */
         #liquid-ether-bg {
             position: fixed;
             top: 0;
@@ -141,6 +150,15 @@
             z-index: 0;
             pointer-events: none;
             opacity: 0.7;
+        }
+        
+        /* Mobile: replace canvas with CSS gradient */
+        @media (max-width: 768px) {
+            #liquid-ether-bg {
+                opacity: 0.3;
+                background: radial-gradient(ellipse at 30% 20%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                            radial-gradient(ellipse at 70% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
+            }
         }
 
         /* 3D Perspective Container */
@@ -159,18 +177,32 @@
             transform: rotateY(8deg) rotateX(5deg) translateZ(20px);
         }
 
-        /* Glassmorphism */
+        /* Glassmorphism - lighter on mobile */
         .glass {
             background: rgba(10, 31, 61, 0.65);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(0, 212, 255, 0.1);
         }
-
+        
         .glass-strong {
             background: rgba(10, 31, 61, 0.85);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
+        }
+        
+        /* Mobile: reduce blur for performance */
+        @media (max-width: 768px) {
+            .glass {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                background: rgba(10, 31, 61, 0.8);
+            }
+            .glass-strong {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                background: rgba(10, 31, 61, 0.9);
+            }
         }
 
         /* Gradient Text */
@@ -307,7 +339,7 @@
             transition: transform 0.1s ease-out;
         }
 
-        /* Intelligent Cursor Trail */
+        /* Intelligent Cursor Trail - disabled on mobile */
         .cursor-trail {
             position: fixed;
             width: 20px;
@@ -318,6 +350,11 @@
             z-index: 9999;
             transition: transform 0.2s ease-out;
             mix-blend-mode: screen;
+        }
+        
+        /* Hide cursor trail on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .cursor-trail { display: none !important; }
         }
 
         /* Loading Screen */
@@ -511,6 +548,51 @@
             .logo-loop-list {
                 animation: none;
             }
+        }
+        
+        /* PERFORMANCE: Mobile optimizations */
+        @media (max-width: 768px) {
+            /* Disable heavy 3D transforms on mobile */
+            .card-3d { transform: none !important; }
+            .card-3d:hover { transform: none !important; }
+            .perspective-container { perspective: none !important; }
+            
+            /* Reduce floating animations */
+            .float { animation-duration: 12s !important; }
+            
+            /* Disable gradient text animation */
+            .gradient-text {
+                background-size: 100% 100% !important;
+                animation: none !important;
+                background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #ff006e 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            
+            /* Disable glow effects */
+            .glow { box-shadow: 0 0 15px rgba(0, 212, 255, 0.15) !important; }
+            .glow-accent { box-shadow: 0 0 15px rgba(124, 58, 237, 0.2) !important; }
+            
+            /* Disable magnetic button effects */
+            .magnetic-btn { transition: none !important; }
+            
+            /* Reduce logo loop speed */
+            .logo-loop-container { --loop-speed: 60s !important; }
+            
+            /* Simpler grid background */
+            .grid-bg {
+                background-image:
+                    linear-gradient(rgba(0, 212, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0, 212, 255, 0.02) 1px, transparent 1px);
+                background-size: 80px 80px;
+            }
+            
+            /* Reduce reveal animation distance */
+            .reveal { transform: translateY(20px) !important; }
+            
+            /* Disable animated borders */
+            .animated-border::before { display: none !important; }
         }
     </style>
 </head>
@@ -1226,19 +1308,23 @@
 
     <!-- JavaScript -->
     <script>
-        // Loading Screen
+        // Loading Screen - faster on mobile
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
-            }, 1000);
+            }, isLowEnd ? 300 : 1000);
         });
 
         // ============================================
         // LIQUID ETHER BACKGROUND - Three.js WebGL Fluid
+        // DISABLED on mobile for performance
         // ============================================
         (function() {
+            // Skip entirely on mobile/low-end devices
+            if (isLowEnd || typeof THREE === 'undefined') return;
+            
             const container = document.getElementById('liquid-ether-bg');
-            if (!container || typeof THREE === 'undefined') return;
+            if (!container) return;
 
             container.style.position = 'fixed';
             container.style.top = '0';
@@ -1635,12 +1721,16 @@
 
             initSimulation();
         })();
-        // Cursor Trail
+        // Cursor Trail - disabled on mobile
         const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX - 10 + 'px';
-            cursor.style.top = e.clientY - 10 + 'px';
-        });
+        if (cursor && !isLowEnd) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 10 + 'px';
+                cursor.style.top = e.clientY - 10 + 'px';
+            });
+        } else if (cursor) {
+            cursor.style.display = 'none';
+        }
 
         // Scroll Reveal Animation
         const revealElements = document.querySelectorAll('.reveal');
