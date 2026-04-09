@@ -573,13 +573,11 @@
         .hero-logo-svg {
             width: 100%;
             height: 100%;
-            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.4))
-                    drop-shadow(0 0 60px rgba(124, 58, 237, 0.2));
             transition: filter 0.3s ease, transform 0.3s ease;
             animation: logoGlow 4s ease-in-out infinite;
         }
 
-        .hero-logo-svg:hover {
+        .hero-logo-wrapper:hover .hero-logo-svg {
             filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.6))
                     drop-shadow(0 0 80px rgba(124, 58, 237, 0.4))
                     drop-shadow(0 0 100px rgba(255, 0, 110, 0.2));
@@ -655,7 +653,7 @@
                 filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3));
             }
 
-            .hero-logo-svg:hover {
+            .hero-logo-wrapper:hover .hero-logo-svg {
                 filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.4));
                 transform: scale(1.02);
             }
@@ -686,6 +684,7 @@
            ============================================ */
         .nav-logo-container {
             perspective: 800px;
+            text-decoration: none;
         }
 
         .nav-logo-3d {
@@ -695,10 +694,15 @@
             overflow: hidden;
             transform-style: preserve-3d;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                        box-shadow 0.4s ease;
+                        box-shadow 0.4s ease,
+                        background 0.4s ease;
             box-shadow: 0 4px 15px rgba(0, 212, 255, 0.15),
                         0 0 0 1px rgba(0, 212, 255, 0.1);
             position: relative;
+            background: rgba(4, 19, 41, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .nav-logo-3d::before {
@@ -706,9 +710,9 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(135deg, 
-                rgba(0, 212, 255, 0.1) 0%, 
-                rgba(124, 58, 237, 0.1) 50%, 
-                rgba(255, 0, 110, 0.05) 100%);
+                rgba(0, 212, 255, 0.05) 0%, 
+                rgba(124, 58, 237, 0.05) 50%, 
+                rgba(255, 0, 110, 0.03) 100%);
             z-index: 1;
             border-radius: inherit;
             opacity: 0;
@@ -731,14 +735,16 @@
             transition: opacity 0.3s ease;
         }
 
+        .nav-logo-3d svg,
         .nav-logo-3d img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: inherit;
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
             position: relative;
             z-index: 2;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 0.4s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 212, 255, 0.3));
         }
 
         .nav-logo-container:hover .nav-logo-3d {
@@ -756,13 +762,17 @@
             opacity: 0.6;
         }
 
+        .nav-logo-container:hover .nav-logo-3d svg,
         .nav-logo-container:hover .nav-logo-3d img {
-            transform: scale(1.05);
+            transform: scale(1.08);
+            filter: drop-shadow(0 4px 8px rgba(0, 212, 255, 0.5))
+                    drop-shadow(0 0 15px rgba(124, 58, 237, 0.3));
         }
 
         /* Footer logo 3D */
         .footer-logo-container {
             perspective: 600px;
+            text-decoration: none;
         }
 
         .footer-logo-3d {
@@ -772,10 +782,15 @@
             overflow: hidden;
             transform-style: preserve-3d;
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                        box-shadow 0.5s ease;
+                        box-shadow 0.5s ease,
+                        background 0.5s ease;
             box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1),
                         0 0 0 1px rgba(0, 212, 255, 0.05);
             position: relative;
+            background: rgba(4, 19, 41, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .footer-logo-3d::before {
@@ -783,20 +798,22 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(135deg, 
-                rgba(0, 212, 255, 0.08) 0%, 
-                rgba(124, 58, 237, 0.08) 100%);
+                rgba(0, 212, 255, 0.05) 0%, 
+                rgba(124, 58, 237, 0.05) 100%);
             z-index: 1;
             border-radius: inherit;
         }
 
+        .footer-logo-3d svg,
         .footer-logo-3d img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: inherit;
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
             position: relative;
             z-index: 2;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 0.5s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 212, 255, 0.2));
         }
 
         .footer-logo-container:hover .footer-logo-3d {
@@ -805,8 +822,11 @@
                         0 0 0 1px rgba(0, 212, 255, 0.15);
         }
 
+        .footer-logo-container:hover .footer-logo-3d svg,
         .footer-logo-container:hover .footer-logo-3d img {
-            transform: scale(1.08);
+            transform: scale(1.1);
+            filter: drop-shadow(0 4px 8px rgba(0, 212, 255, 0.4))
+                    drop-shadow(0 0 12px rgba(124, 58, 237, 0.25));
         }
 
         @keyframes borderRotate {
@@ -958,7 +978,32 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="#home" class="flex items-center gap-3 group nav-logo-container">
                 <div class="nav-logo-3d">
-                    <img src="nexura-logo.jpeg" alt="Nexura Analytics">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[85%] h-[85%] relative z-[2] drop-shadow-[0_2px_4px_rgba(0,212,255,0.3)] transition-all duration-400" style="filter:drop-shadow(0 2px 4px rgba(0,212,255,0.3))">
+                      <defs>
+                        <linearGradient id="nb1" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#00a8cc"/></linearGradient>
+                        <linearGradient id="nb2" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#7c3aed"/></linearGradient>
+                        <linearGradient id="nb3" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#7c3aed"/><stop offset="100%" style="stop-color:#a78bfa"/></linearGradient>
+                        <linearGradient id="nb4" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#7c3aed"/><stop offset="100%" style="stop-color:#ff006e"/></linearGradient>
+                        <radialGradient id="ng1"><stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/></radialGradient>
+                        <radialGradient id="ng2"><stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/></radialGradient>
+                        <radialGradient id="ng3"><stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0"/></radialGradient>
+                        <radialGradient id="ng4"><stop offset="0%" style="stop-color:#ff006e;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#ff006e;stop-opacity:0"/></radialGradient>
+                        <filter id="nlglow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        <filter id="nshadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00d4ff" flood-opacity="0.4"/></filter>
+                      </defs>
+                      <circle cx="50" cy="50" r="30" fill="none" stroke="#00d4ff" stroke-width="0.3" opacity="0.15"><animate attributeName="r" values="28;33;28" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.1;0.25;0.1" dur="3s" repeatCount="indefinite"/></circle>
+                      <rect x="12" y="50" width="14" height="32" rx="4" fill="url(#nb1)" opacity="0.9"><animate attributeName="height" values="30;34;30" dur="2.5s" repeatCount="indefinite"/><animate attributeName="y" values="52;48;52" dur="2.5s" repeatCount="indefinite"/></rect>
+                      <rect x="30" y="30" width="14" height="52" rx="4" fill="url(#nb2)" opacity="0.95"><animate attributeName="height" values="50;54;50" dur="2.5s" begin="0.2s" repeatCount="indefinite"/><animate attributeName="y" values="32;28;32" dur="2.5s" begin="0.2s" repeatCount="indefinite"/></rect>
+                      <rect x="48" y="40" width="14" height="42" rx="4" fill="url(#nb3)" opacity="0.9"><animate attributeName="height" values="40;44;40" dur="2.5s" begin="0.4s" repeatCount="indefinite"/><animate attributeName="y" values="42;38;42" dur="2.5s" begin="0.4s" repeatCount="indefinite"/></rect>
+                      <rect x="66" y="14" width="14" height="68" rx="4" fill="url(#nb4)" opacity="1"><animate attributeName="height" values="66;70;66" dur="2.5s" begin="0.6s" repeatCount="indefinite"/><animate attributeName="y" values="16;12;16" dur="2.5s" begin="0.6s" repeatCount="indefinite"/></rect>
+                      <polyline points="19,48 37,28 55,38 73,12" fill="none" stroke="url(#nb2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#nlglow)" opacity="0.9"><animate attributeName="stroke-dasharray" values="0,200;200,0" dur="1.5s" fill="freeze"/></polyline>
+                      <circle cx="19" cy="48" r="5" fill="url(#ng1)"><animate attributeName="r" values="4;6;4" dur="1.8s" repeatCount="indefinite"/></circle><circle cx="19" cy="48" r="3.5" fill="#00d4ff" filter="url(#nshadow)"/>
+                      <circle cx="37" cy="28" r="5" fill="url(#ng2)"><animate attributeName="r" values="4;6;4" dur="1.8s" begin="0.2s" repeatCount="indefinite"/></circle><circle cx="37" cy="28" r="3.5" fill="#00d4ff" filter="url(#nshadow)"/>
+                      <circle cx="55" cy="38" r="5" fill="url(#ng3)"><animate attributeName="r" values="4;6;4" dur="1.8s" begin="0.4s" repeatCount="indefinite"/></circle><circle cx="55" cy="38" r="3.5" fill="#7c3aed" filter="url(#nshadow)"/>
+                      <circle cx="73" cy="12" r="6" fill="url(#ng4)"><animate attributeName="r" values="5;7;5" dur="1.8s" begin="0.6s" repeatCount="indefinite"/></circle><circle cx="73" cy="12" r="4" fill="#ff006e" filter="url(#nshadow)"/>
+                      <circle cx="25" cy="18" r="1.2" fill="#00d4ff" opacity="0.5"><animate attributeName="cy" values="18;12;18" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.5s" repeatCount="indefinite"/></circle>
+                      <circle cx="80" cy="40" r="1" fill="#7c3aed" opacity="0.4"><animate attributeName="cy" values="40;32;40" dur="3s" begin="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" begin="1s" repeatCount="indefinite"/></circle>
+                    </svg>
                 </div>
                 <span class="font-display font-bold text-xl tracking-tight">
                     NEX<span class="text-primary">URA</span> <span class="text-text-secondary font-semibold">A N A L Y T I C S</span>
@@ -1007,7 +1052,34 @@
                 <!-- 3D Logo -->
                 <div class="hero-logo-container flex justify-center md:justify-start mb-8">
                     <div class="hero-logo-wrapper">
-                        <img src="nexura-logo-3d.svg" alt="Nexura Analytics 3D Logo" class="hero-logo-svg" />
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" class="hero-logo-svg">
+                          <defs>
+                            <linearGradient id="hb1" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#00a8cc"/></linearGradient>
+                            <linearGradient id="hb2" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#7c3aed"/></linearGradient>
+                            <linearGradient id="hb3" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#7c3aed"/><stop offset="100%" style="stop-color:#a78bfa"/></linearGradient>
+                            <linearGradient id="hb4" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#7c3aed"/><stop offset="100%" style="stop-color:#ff006e"/></linearGradient>
+                            <radialGradient id="hg1"><stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6"/><stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/></radialGradient>
+                            <radialGradient id="hg2"><stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6"/><stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/></radialGradient>
+                            <radialGradient id="hg3"><stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.6"/><stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0"/></radialGradient>
+                            <radialGradient id="hg4"><stop offset="0%" style="stop-color:#ff006e;stop-opacity:0.6"/><stop offset="100%" style="stop-color:#ff006e;stop-opacity:0"/></radialGradient>
+                            <filter id="hshadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00d4ff" flood-opacity="0.3"/></filter>
+                            <filter id="hnshadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#00d4ff" flood-opacity="0.5"/></filter>
+                            <filter id="hlineglow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                          </defs>
+                          <circle cx="200" cy="180" r="120" fill="none" stroke="url(#hb2)" stroke-width="0.5" opacity="0.2"><animate attributeName="r" values="110;130;110" dur="4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.1;0.3;0.1" dur="4s" repeatCount="indefinite"/></circle>
+                          <circle cx="200" cy="180" r="100" fill="none" stroke="url(#hb2)" stroke-width="0.5" opacity="0.15"><animate attributeName="r" values="95;115;95" dur="4s" begin="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.05;0.2;0.05" dur="4s" begin="1s" repeatCount="indefinite"/></circle>
+                          <g filter="url(#hshadow)"><rect x="105" y="160" width="40" height="80" rx="8" fill="url(#hb1)" opacity="0.85"><animate attributeName="height" values="75;85;75" dur="3s" repeatCount="indefinite"/><animate attributeName="y" values="165;155;165" dur="3s" repeatCount="indefinite"/></rect><rect x="105" y="240" width="40" height="4" rx="2" fill="#00d4ff" opacity="0.3"/><rect x="160" y="110" width="40" height="130" rx="8" fill="url(#hb2)" opacity="0.9"><animate attributeName="height" values="125;135;125" dur="3s" begin="0.3s" repeatCount="indefinite"/><animate attributeName="y" values="115;105;115" dur="3s" begin="0.3s" repeatCount="indefinite"/></rect><rect x="160" y="240" width="40" height="4" rx="2" fill="#00d4ff" opacity="0.3"/><rect x="215" y="140" width="40" height="100" rx="8" fill="url(#hb3)" opacity="0.85"><animate attributeName="height" values="95;105;95" dur="3s" begin="0.6s" repeatCount="indefinite"/><animate attributeName="y" values="145;135;145" dur="3s" begin="0.6s" repeatCount="indefinite"/></rect><rect x="215" y="240" width="40" height="4" rx="2" fill="#7c3aed" opacity="0.3"/><rect x="270" y="70" width="40" height="170" rx="8" fill="url(#hb4)" opacity="0.95"><animate attributeName="height" values="165;175;165" dur="3s" begin="0.9s" repeatCount="indefinite"/><animate attributeName="y" values="75;65;75" dur="3s" begin="0.9s" repeatCount="indefinite"/></rect><rect x="270" y="240" width="40" height="4" rx="2" fill="#ff006e" opacity="0.3"/></g>
+                          <polyline points="125,155 180,105 235,135 290,65" fill="none" stroke="url(#hb2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#hlineglow)" opacity="0.9"><animate attributeName="stroke-dasharray" values="0,500;500,0" dur="2s" fill="freeze"/></polyline>
+                          <circle cx="125" cy="155" r="12" fill="url(#hg1)"><animate attributeName="r" values="10;14;10" dur="2s" repeatCount="indefinite"/></circle><circle cx="125" cy="155" r="8" fill="#00d4ff" filter="url(#hnshadow)"/>
+                          <circle cx="180" cy="105" r="12" fill="url(#hg2)"><animate attributeName="r" values="10;14;10" dur="2s" begin="0.3s" repeatCount="indefinite"/></circle><circle cx="180" cy="105" r="8" fill="#00d4ff" filter="url(#hnshadow)"/>
+                          <circle cx="235" cy="135" r="12" fill="url(#hg3)"><animate attributeName="r" values="10;14;10" dur="2s" begin="0.6s" repeatCount="indefinite"/></circle><circle cx="235" cy="135" r="8" fill="#7c3aed" filter="url(#hnshadow)"/>
+                          <circle cx="290" cy="65" r="14" fill="url(#hg4)"><animate attributeName="r" values="12;16;12" dur="2s" begin="0.9s" repeatCount="indefinite"/></circle><circle cx="290" cy="65" r="9" fill="#ff006e" filter="url(#hnshadow)"/>
+                          <circle cx="150" cy="80" r="2" fill="#00d4ff" opacity="0.6"><animate attributeName="cy" values="80;60;80" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle>
+                          <circle cx="260" cy="90" r="1.5" fill="#7c3aed" opacity="0.5"><animate attributeName="cy" values="90;70;90" dur="4s" begin="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;0.7;0.2" dur="4s" begin="1s" repeatCount="indefinite"/></circle>
+                          <circle cx="100" cy="200" r="1.5" fill="#00ff9c" opacity="0.4"><animate attributeName="cy" values="200;180;200" dur="3.5s" begin="0.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;0.6;0.2" dur="3.5s" begin="0.5s" repeatCount="indefinite"/></circle>
+                          <circle cx="310" cy="180" r="2" fill="#ff006e" opacity="0.5"><animate attributeName="cy" values="180;160;180" dur="4s" begin="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0.7;0.3" dur="4s" begin="1.5s" repeatCount="indefinite"/></circle>
+                          <circle cx="200" cy="50" r="1.5" fill="#00d4ff" opacity="0.4"><animate attributeName="cy" values="50;35;50" dur="3s" begin="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" begin="2s" repeatCount="indefinite"/></circle>
+                        </svg>
                         <div class="hero-logo-glow"></div>
                     </div>
                 </div>
@@ -1595,7 +1667,31 @@
                 <div class="md:col-span-2">
                     <a href="#home" class="flex items-center gap-3 mb-4 footer-logo-container">
                         <div class="footer-logo-3d">
-                            <img src="nexura-logo.jpeg" alt="Nexura Analytics">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-[85%] h-[85%] relative z-[2]">
+                              <defs>
+                                <linearGradient id="fb1" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#00a8cc"/></linearGradient>
+                                <linearGradient id="fb2" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#00d4ff"/><stop offset="100%" style="stop-color:#7c3aed"/></linearGradient>
+                                <linearGradient id="fb3" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#7c3aed"/><stop offset="100%" style="stop-color:#a78bfa"/></linearGradient>
+                                <linearGradient id="fb4" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" style="stop-color:#7c3aed"/><stop offset="100%" style="stop-color:#ff006e"/></linearGradient>
+                                <radialGradient id="fg1"><stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/></radialGradient>
+                                <radialGradient id="fg2"><stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/></radialGradient>
+                                <radialGradient id="fg3"><stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0"/></radialGradient>
+                                <radialGradient id="fg4"><stop offset="0%" style="stop-color:#ff006e;stop-opacity:0.7"/><stop offset="100%" style="stop-color:#ff006e;stop-opacity:0"/></radialGradient>
+                                <filter id="fshadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00d4ff" flood-opacity="0.4"/></filter>
+                              </defs>
+                              <circle cx="50" cy="50" r="30" fill="none" stroke="#00d4ff" stroke-width="0.3" opacity="0.15"><animate attributeName="r" values="28;33;28" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.1;0.25;0.1" dur="3s" repeatCount="indefinite"/></circle>
+                              <rect x="12" y="50" width="14" height="32" rx="4" fill="url(#fb1)" opacity="0.9"><animate attributeName="height" values="30;34;30" dur="2.5s" repeatCount="indefinite"/><animate attributeName="y" values="52;48;52" dur="2.5s" repeatCount="indefinite"/></rect>
+                              <rect x="30" y="30" width="14" height="52" rx="4" fill="url(#fb2)" opacity="0.95"><animate attributeName="height" values="50;54;50" dur="2.5s" begin="0.2s" repeatCount="indefinite"/><animate attributeName="y" values="32;28;32" dur="2.5s" begin="0.2s" repeatCount="indefinite"/></rect>
+                              <rect x="48" y="40" width="14" height="42" rx="4" fill="url(#fb3)" opacity="0.9"><animate attributeName="height" values="40;44;40" dur="2.5s" begin="0.4s" repeatCount="indefinite"/><animate attributeName="y" values="42;38;42" dur="2.5s" begin="0.4s" repeatCount="indefinite"/></rect>
+                              <rect x="66" y="14" width="14" height="68" rx="4" fill="url(#fb4)" opacity="1"><animate attributeName="height" values="66;70;66" dur="2.5s" begin="0.6s" repeatCount="indefinite"/><animate attributeName="y" values="16;12;16" dur="2.5s" begin="0.6s" repeatCount="indefinite"/></rect>
+                              <polyline points="19,48 37,28 55,38 73,12" fill="none" stroke="url(#fb2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><animate attributeName="stroke-dasharray" values="0,200;200,0" dur="1.5s" fill="freeze"/></polyline>
+                              <circle cx="19" cy="48" r="5" fill="url(#fg1)"><animate attributeName="r" values="4;6;4" dur="1.8s" repeatCount="indefinite"/></circle><circle cx="19" cy="48" r="3.5" fill="#00d4ff" filter="url(#fshadow)"/>
+                              <circle cx="37" cy="28" r="5" fill="url(#fg2)"><animate attributeName="r" values="4;6;4" dur="1.8s" begin="0.2s" repeatCount="indefinite"/></circle><circle cx="37" cy="28" r="3.5" fill="#00d4ff" filter="url(#fshadow)"/>
+                              <circle cx="55" cy="38" r="5" fill="url(#fg3)"><animate attributeName="r" values="4;6;4" dur="1.8s" begin="0.4s" repeatCount="indefinite"/></circle><circle cx="55" cy="38" r="3.5" fill="#7c3aed" filter="url(#fshadow)"/>
+                              <circle cx="73" cy="12" r="6" fill="url(#fg4)"><animate attributeName="r" values="5;7;5" dur="1.8s" begin="0.6s" repeatCount="indefinite"/></circle><circle cx="73" cy="12" r="4" fill="#ff006e" filter="url(#fshadow)"/>
+                              <circle cx="25" cy="18" r="1.2" fill="#00d4ff" opacity="0.5"><animate attributeName="cy" values="18;12;18" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.5s" repeatCount="indefinite"/></circle>
+                              <circle cx="80" cy="40" r="1" fill="#7c3aed" opacity="0.4"><animate attributeName="cy" values="40;32;40" dur="3s" begin="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" begin="1s" repeatCount="indefinite"/></circle>
+                            </svg>
                         </div>
                         <span class="font-display font-bold text-xl tracking-tight">
                             NEX<span class="text-primary">URA</span> <span class="text-text-secondary font-semibold">A N A L Y T I C S</span>
