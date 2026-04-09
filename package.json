@@ -1,0 +1,17 @@
+{
+  "name": "stitch-(4)",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test-page.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.59.1",
+    "three": "^0.183.2"
+  }
+}

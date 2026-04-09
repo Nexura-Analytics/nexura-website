@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#020a18">
+    <title>Nexura Analytics | Data Intelligence Reimagined</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "deep": "#020a18",
+                        "surface": "#041329",
+                        "surface-elevated": "#0a1f3d",
+                        "surface-glass": "rgba(10, 31, 61, 0.65)",
+                        "primary": "#00d4ff",
+                        "primary-dim": "#00a8cc",
+                        "primary-glow": "rgba(0, 212, 255, 0.15)",
+                        "accent": "#7c3aed",
+                        "accent-light": "#a78bfa",
+                        "neon-pink": "#ff006e",
+                        "neon-green": "#00ff9c",
+                        "text-primary": "#e8f4ff",
+                        "text-secondary": "#8ba3c7",
+                        "text-muted": "#4a6585"
+                    },
+                    fontFamily: {
+                        "display": ["Playfair Display", "serif"],
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono": ["Space Mono", "monospace"]
+                    },
+                    animation: {
+                        "float": "float 6s ease-in-out infinite",
+                        "pulse-glow": "pulseGlow 3s ease-in-out infinite",
+                        "slide-up": "slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                        "rotate-slow": "rotateSlow 20s linear infinite",
+                        "gradient-shift": "gradientShift 8s ease infinite"
+                    },
+                    keyframes: {
+                        float: {
+                            "0%, 100%": { transform: "translateY(0px)" },
+                            "50%": { transform: "translateY(-20px)" }
+                        },
+                        pulseGlow: {
+                            "0%, 100%": { boxShadow: "0 0 20px rgba(0, 212, 255, 0.3)" },
+                            "50%": { boxShadow: "0 0 40px rgba(0, 212, 255, 0.6)" }
+                        },
+                        slideUp: {
+                            "0%": { opacity: "0", transform: "translateY(60px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" }
+                        },
+                        rotateSlow: {
+                            "0%": { transform: "rotate(0deg)" },
+                            "100%": { transform: "rotate(360deg)" }
+                        },
+                        gradientShift: {
+                            "0%, 100%": { backgroundPosition: "0% 50%" },
+                            "50%": { backgroundPosition: "100% 50%" }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            color-scheme: dark;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #020a18;
+            color: #e8f4ff;
+            overflow-x: hidden;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #00d4ff;
+            color: #020a18;
+            padding: 8px 16px;
+            z-index: 10001;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #041329;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00d4ff, #7c3aed);
+            border-radius: 4px;
+        }
+
+        /* Three.js Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Liquid Ether Canvas */
+        #liquid-ether-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* 3D Perspective Container */
+        .perspective-container {
+            perspective: 1500px;
+            transform-style: preserve-3d;
+        }
+
+        /* 3D Card Effect */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .card-3d:hover {
+            transform: rotateY(8deg) rotateX(5deg) translateZ(20px);
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(10, 31, 61, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        .glass-strong {
+            background: rgba(10, 31, 61, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #ff006e 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Glow Effect */
+        .glow {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3),
+                        0 0 60px rgba(0, 212, 255, 0.2),
+                        inset 0 0 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .glow-accent {
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.4),
+                        0 0 60px rgba(124, 58, 237, 0.2);
+        }
+
+        /* Animated Border */
+        .animated-border {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00d4ff, #7c3aed, #ff006e, #00ff9c, #00d4ff);
+            background-size: 400% 400%;
+            animation: gradientShift 6s ease infinite;
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .animated-border:hover::before {
+            opacity: 1;
+        }
+
+        /* Noise Texture Overlay */
+        .noise::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        /* Rotating Border */
+        @keyframes rotateSlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .rotate-slow {
+            animation: rotateSlow 20s linear infinite;
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Typewriter Cursor */
+        .typewriter-cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+            color: #00d4ff;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Parallax Layers */
+        .parallax-layer {
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Intelligent Cursor Trail */
+        .cursor-trail {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.3), transparent);
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.2s ease-out;
+            mix-blend-mode: screen;
+        }
+
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020a18;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-circle {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(0, 212, 255, 0.1);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: rotateSlow 1s linear infinite;
+        }
+
+        /* Smart Tooltip */
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.9);
+            color: #020a18;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .tooltip-parent:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Section Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 212, 255, 0.3) 20%, 
+                rgba(124, 58, 237, 0.3) 50%, 
+                rgba(0, 212, 255, 0.3) 80%, 
+                transparent 100%
+            );
+        }
+
+        /* 3D Tilt Effect on Scroll */
+        .tilt-on-scroll {
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .float, .pulse-glow, .rotate-slow {
+                animation: none;
+            }
+        }
+
+        /* Focus Visible Styles */
+        *:focus-visible {
+            outline: 2px solid #00d4ff;
+            outline-offset: 2px;
+        }
+
+        a:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px #020a18, 0 0 0 4px #00d4ff;
+        }
+
+        button:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px #020a18, 0 0 0 4px #00d4ff;
+        }
+
+        /* Select styling for Windows dark mode */
+        select {
+            background-color: rgba(10, 31, 61, 0.65);
+            color: #e8f4ff;
+        }
+
+        /* Logo Loop Animation */
+        .logo-loop-container {
+            --loop-gap: 48px;
+            --loop-logo-height: 60px;
+            --loop-speed: 30s;
+        }
+
+        .logo-loop-track {
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .logo-loop-list {
+            display: flex;
+            gap: var(--loop-gap);
+            width: max-content;
+            animation: logoLoopScroll var(--loop-speed) linear infinite;
+            will-change: transform;
+        }
+
+        .logo-loop-list.reverse {
+            animation-direction: reverse;
+        }
+
+        .logo-loop-list.paused {
+            animation-play-state: paused;
+        }
+
+        @keyframes logoLoopScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .logo-loop-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--loop-logo-height);
+            padding: 12px 24px;
+            background: rgba(10, 31, 61, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.08);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+        }
+
+        .logo-loop-item:hover {
+            background: rgba(10, 31, 61, 0.7);
+            border-color: rgba(0, 212, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .logo-loop-item svg {
+            width: 32px;
+            height: 32px;
+            fill: #8ba3c7;
+            transition: fill 0.3s ease;
+        }
+
+        .logo-loop-item:hover svg {
+            fill: #00d4ff;
+        }
+
+        .logo-loop-item .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #8ba3c7;
+            letter-spacing: -0.02em;
+            transition: color 0.3s ease;
+        }
+
+        .logo-loop-item:hover .logo-text {
+            color: #00d4ff;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .logo-loop-list {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body class="grid-bg">
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Loading Screen -->
+    <div class="loader" id="loader" role="status" aria-label="Loading">
+        <div class="flex flex-col items-center gap-6">
+            <div class="loader-circle"></div>
+            <div class="font-mono text-primary text-sm tracking-widest">INITIALIZING</div>
+        </div>
+    </div>
+
+    <!-- Cursor Trail -->
+    <div class="cursor-trail" id="cursor" aria-hidden="true"></div>
+
+    <!-- Liquid Ether Background -->
+    <canvas id="liquid-ether-bg" aria-hidden="true"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass py-5 px-8 md:px-16 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#home" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-white text-xl">neurology</span>
+                </div>
+                <span class="font-display font-bold text-xl tracking-tight">
+                    NEX<span class="text-primary">URA</span> <span class="text-text-secondary font-semibold">A N A L Y T I C S</span>
+                </span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-10">
+                <a href="#home" class="font-body font-semibold text-sm text-text-secondary hover:text-primary transition-colors relative group">
+                    Home
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#services" class="font-body font-semibold text-sm text-text-secondary hover:text-primary transition-colors relative group">
+                    Services
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#workflow" class="font-body font-semibold text-sm text-text-secondary hover:text-primary transition-colors relative group">
+                    Workflow
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#tools" class="font-body font-semibold text-sm text-text-secondary hover:text-primary transition-colors relative group">
+                    Tools
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#contact" class="font-body font-semibold text-sm text-text-secondary hover:text-primary transition-colors relative group">
+                    Contact
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+                </a>
+            </div>
+
+            <button class="magnetic-btn relative px-8 py-3 rounded-full bg-gradient-to-r from-primary to-accent font-body font-bold text-sm text-white overflow-hidden group">
+                <span class="relative z-10">Get Started</span>
+                <div class="absolute inset-0 bg-gradient-to-r from-accent to-neon-pink opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 md:px-16 overflow-hidden">
+        <!-- Floating 3D Elements -->
+        <div class="absolute top-40 right-20 w-32 h-32 rounded-2xl border border-primary/20 rotate-12 float opacity-30"></div>
+        <div class="absolute bottom-40 left-20 w-24 h-24 rounded-full border border-accent/30 -rotate-12 float opacity-30" style="animation-delay: 2s;"></div>
+        <div class="absolute top-60 left-40 w-16 h-16 bg-primary/10 rounded-lg rotate-45 float opacity-20" style="animation-delay: 4s;"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-8 reveal active">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass">
+                    <span class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></span>
+                    <span class="font-mono text-xs text-primary tracking-widest">INTELLIGENCE ENGINE v2.0</span>
+                </div>
+
+                <h1 class="font-display font-extrabold text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight">
+                    Transforming Data Into 
+                    <span class="gradient-text">Strategic Power</span>
+                </h1>
+
+                <p class="font-body text-lg md:text-xl text-text-secondary max-w-xl leading-relaxed">
+                    Nexura Analytics decodes complexity into clarity. We transform raw data into actionable intelligence through AI-powered analytics and immersive visualizations.
+                </p>
+
+                <div class="flex flex-wrap gap-4">
+                    <button class="magnetic-btn px-10 py-5 rounded-full bg-gradient-to-r from-primary to-accent font-body font-bold text-white hover:shadow-[0_0_40px_rgba(0,212,255,0.5)] transition-all duration-300">
+                        Explore Platform
+                        <span class="material-symbols-outlined inline-block ml-2 align-middle">arrow_forward</span>
+                    </button>
+                    <button class="magnetic-btn px-10 py-5 rounded-full glass font-body font-bold hover:bg-surface-glass transition-all duration-300 border border-primary/20 hover:border-primary/50">
+                        Watch Demo
+                        <span class="material-symbols-outlined inline-block ml-2 align-middle">play_circle</span>
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-6 pt-8">
+                    <div class="space-y-1">
+                        <div class="font-display font-bold text-3xl text-primary counter" data-target="500">0</div>
+                        <div class="font-body text-xs text-text-muted uppercase tracking-wider">Projects Delivered</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-display font-bold text-3xl text-accent counter" data-target="98">0</div>
+                        <div class="font-body text-xs text-text-muted uppercase tracking-wider">Client Retention %</div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-display font-bold text-3xl text-neon-green counter" data-target="50">0</div>
+                        <div class="font-body text-xs text-text-muted uppercase tracking-wider">Enterprise Clients</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Dashboard Preview -->
+            <div class="relative perspective-container reveal active" style="transition-delay: 0.3s;">
+                <div class="card-3d relative glass rounded-3xl p-8 glow">
+                    <!-- Mock Dashboard -->
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <div class="font-display font-bold text-lg">Analytics Dashboard</div>
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-neon-pink"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-neon-green"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Placeholder -->
+                        <div class="h-48 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-end justify-around p-4 gap-2">
+                            <div class="w-full bg-gradient-to-t from-primary to-primary-dim rounded-t-lg" style="height: 60%"></div>
+                            <div class="w-full bg-gradient-to-t from-accent to-accent-light rounded-t-lg" style="height: 85%"></div>
+                            <div class="w-full bg-gradient-to-t from-primary to-primary-dim rounded-t-lg" style="height: 45%"></div>
+                            <div class="w-full bg-gradient-to-t from-neon-green to-primary rounded-t-lg" style="height: 95%"></div>
+                            <div class="w-full bg-gradient-to-t from-accent to-accent-light rounded-t-lg" style="height: 70%"></div>
+                            <div class="w-full bg-gradient-to-t from-primary to-primary-dim rounded-t-lg" style="height: 55%"></div>
+                        </div>
+
+                        <!-- Metrics -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="glass rounded-xl p-4">
+                                <div class="font-mono text-xs text-text-muted mb-1">REVENUE</div>
+                                <div class="font-display font-bold text-2xl text-primary">$2.4M</div>
+                                <div class="text-xs text-neon-green mt-1">↑ 24.5%</div>
+                            </div>
+                            <div class="glass rounded-xl p-4">
+                                <div class="font-mono text-xs text-text-muted mb-1">GROWTH</div>
+                                <div class="font-display font-bold text-2xl text-accent">+147%</div>
+                                <div class="text-xs text-neon-green mt-1">↑ 12.3%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge -->
+                    <div class="absolute -top-6 -right-6 glass rounded-2xl px-6 py-4 pulse-glow">
+                        <div class="font-mono text-xs text-text-muted">LIVE INSIGHTS</div>
+                        <div class="font-display font-bold text-primary text-2xl">2,847</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+            <span class="font-mono text-xs text-text-muted tracking-widest">SCROLL</span>
+            <span class="material-symbols-outlined text-primary">keyboard_arrow_down</span>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Services Section -->
+    <section id="services" class="py-32 px-6 md:px-16 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
+                    <span class="material-symbols-outlined text-primary text-sm">auto_awesome</span>
+                    <span class="font-mono text-xs text-primary tracking-widest">CAPABILITIES</span>
+                </div>
+                <h2 class="font-display font-extrabold text-5xl md:text-6xl mb-6">
+                    Intelligent <span class="gradient-text">Solutions</span>
+                </h2>
+                <p class="font-body text-lg text-text-secondary max-w-2xl mx-auto">
+                    End-to-end data analytics services engineered for maximum impact
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 perspective-container">
+                <!-- Service Card 1 -->
+                <div class="card-3d glass rounded-3xl p-8 hover:border-primary/40 transition-all duration-300 group reveal">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-primary text-3xl">cleaning_services</span>
+                    </div>
+                    <h3 class="font-display font-bold text-2xl mb-4">Data Engineering</h3>
+                    <p class="font-body text-text-secondary mb-6 leading-relaxed">
+                        Advanced data cleaning, transformation, and pipeline architecture for pristine datasets.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Missing value imputation
+                        </li>
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Outlier detection & handling
+                        </li>
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Multi-source integration
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service Card 2 -->
+                <div class="card-3d glass rounded-3xl p-8 hover:border-accent/40 transition-all duration-300 group reveal" style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-accent text-3xl">monitoring</span>
+                    </div>
+                    <h3 class="font-display font-bold text-2xl mb-4">Predictive Analytics</h3>
+                    <p class="font-body text-text-secondary mb-6 leading-relaxed">
+                        Machine learning models that forecast trends and reveal hidden patterns in your data.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                            Time-series forecasting
+                        </li>
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                            Statistical modeling
+                        </li>
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                            Correlation analysis
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service Card 3 -->
+                <div class="card-3d glass rounded-3xl p-8 hover:border-neon-green/40 transition-all duration-300 group reveal" style="transition-delay: 0.4s;">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-green/20 to-neon-green/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-neon-green text-3xl">dashboard</span>
+                    </div>
+                    <h3 class="font-display font-bold text-2xl mb-4">Visual Intelligence</h3>
+                    <p class="font-body text-text-secondary mb-6 leading-relaxed">
+                        Interactive dashboards and data stories that make complex insights instantly understandable.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon-green"></span>
+                            Real-time dashboards
+                        </li>
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon-green"></span>
+                            Custom visualizations
+                        </li>
+                        <li class="flex items-center gap-3 font-body text-sm text-text-secondary">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neon-green"></span>
+                            Executive reporting
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Logo Loop Section - Trusted By -->
+    <section class="py-20 px-6 md:px-16 relative overflow-hidden" aria-label="Trusted by leading companies">
+        <div class="max-w-7xl mx-auto mb-12 text-center reveal">
+            <h3 class="font-mono text-sm text-text-muted uppercase tracking-widest mb-4">Trusted by Industry Leaders</h3>
+            <p class="font-body text-text-secondary">Powering analytics for forward-thinking organizations</p>
+        </div>
+
+        <!-- Logo Loop Container -->
+        <div class="logo-loop-container relative" role="region" aria-label="Partner logos">
+            <!-- Fade Edges -->
+            <div class="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none" style="background: linear-gradient(to right, #020a18 0%, transparent 100%);"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none" style="background: linear-gradient(to left, #020a18 0%, transparent 100%);"></div>
+
+            <!-- Loop Track -->
+            <div class="logo-loop-track">
+                <div class="logo-loop-list" id="logo-loop-1">
+                    <!-- Logos will be duplicated for seamless loop -->
+                </div>
+            </div>
+
+            <!-- Second Row (Reverse Direction) -->
+            <div class="logo-loop-track mt-4">
+                <div class="logo-loop-list reverse" id="logo-loop-2">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Workflow Section -->
+    <section id="workflow" class="py-32 px-6 md:px-16 relative overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-20 reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
+                    <span class="material-symbols-outlined text-primary text-sm">hub</span>
+                    <span class="font-mono text-xs text-primary tracking-widest">PROCESS</span>
+                </div>
+                <h2 class="font-display font-extrabold text-5xl md:text-6xl mb-6">
+                    The Intelligence <span class="gradient-text">Pipeline</span>
+                </h2>
+                <p class="font-body text-lg text-text-secondary max-w-2xl mx-auto">
+                    Our proven 5-step methodology transforms raw data into strategic advantage
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-5 gap-8 relative">
+                <!-- Connecting Line -->
+                <div class="hidden md:block absolute top-16 left-0 w-full h-0.5 bg-gradient-to-r from-primary via-accent to-neon-green opacity-20"></div>
+
+                <!-- Step 1 -->
+                <div class="relative text-center group reveal">
+                    <div class="w-32 h-32 mx-auto rounded-3xl glass flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-primary/50 transition-all duration-300 relative">
+                        <div class="font-display font-extrabold text-4xl gradient-text">01</div>
+                        <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-sm">lightbulb</span>
+                        </div>
+                    </div>
+                    <h4 class="font-display font-bold text-xl mb-3">Discovery</h4>
+                    <p class="font-body text-sm text-text-secondary">Define objectives and map business requirements</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative text-center group reveal" style="transition-delay: 0.15s;">
+                    <div class="w-32 h-32 mx-auto rounded-3xl glass flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-accent/50 transition-all duration-300 relative">
+                        <div class="font-display font-extrabold text-4xl gradient-text">02</div>
+                        <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-accent flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-sm">database</span>
+                        </div>
+                    </div>
+                    <h4 class="font-display font-bold text-xl mb-3">Ingestion</h4>
+                    <p class="font-body text-sm text-text-secondary">Aggregate and consolidate data sources</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative text-center group reveal" style="transition-delay: 0.3s;">
+                    <div class="w-32 h-32 mx-auto rounded-3xl glass flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-primary/50 transition-all duration-300 relative">
+                        <div class="font-display font-extrabold text-4xl gradient-text">03</div>
+                        <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-neon-green flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-sm">precision_manufacturing</span>
+                        </div>
+                    </div>
+                    <h4 class="font-display font-bold text-xl mb-3">Refinement</h4>
+                    <p class="font-body text-sm text-text-secondary">Clean, validate, and enrich datasets</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative text-center group reveal" style="transition-delay: 0.45s;">
+                    <div class="w-32 h-32 mx-auto rounded-3xl glass flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-accent/50 transition-all duration-300 relative">
+                        <div class="font-display font-extrabold text-4xl gradient-text">04</div>
+                        <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-neon-pink flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-sm">psychology</span>
+                        </div>
+                    </div>
+                    <h4 class="font-display font-bold text-xl mb-3">Analysis</h4>
+                    <p class="font-body text-sm text-text-secondary">Apply ML models and statistical methods</p>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="relative text-center group reveal" style="transition-delay: 0.6s;">
+                    <div class="w-32 h-32 mx-auto rounded-3xl glass flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-neon-green/50 transition-all duration-300 relative">
+                        <div class="font-display font-extrabold text-4xl gradient-text">05</div>
+                        <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-sm">rocket_launch</span>
+                        </div>
+                    </div>
+                    <h4 class="font-display font-bold text-xl mb-3">Activation</h4>
+                    <p class="font-body text-sm text-text-secondary">Deploy insights through interactive dashboards</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Tools & Technology Section -->
+    <section id="tools" class="py-32 px-6 md:px-16 relative">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="reveal">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
+                    <span class="material-symbols-outlined text-primary text-sm">code</span>
+                    <span class="font-mono text-xs text-primary tracking-widest">TECHNOLOGY</span>
+                </div>
+                <h2 class="font-display font-extrabold text-5xl md:text-6xl mb-8">
+                    Our <span class="gradient-text">Tech Stack</span>
+                </h2>
+                <p class="font-body text-lg text-text-secondary mb-12 leading-relaxed">
+                    We deploy cutting-edge tools and frameworks to deliver enterprise-grade analytics solutions with maximum reliability.
+                </p>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="font-mono text-xs text-primary uppercase tracking-widest mb-4">Languages</h5>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Python</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">SQL</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">R</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="font-mono text-xs text-accent uppercase tracking-widest mb-4">BI Platforms</h5>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Power BI</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Tableau</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Looker</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="font-mono text-xs text-neon-green uppercase tracking-widest mb-4">Libraries</h5>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Pandas</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">NumPy</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Scikit-learn</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="font-mono text-xs text-neon-pink uppercase tracking-widest mb-4">Infrastructure</h5>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">AWS</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Docker</span>
+                                <span class="px-4 py-2 rounded-full glass text-sm font-body font-semibold">Airflow</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Data Analysis Dashboard -->
+            <div class="relative perspective-container reveal" style="transition-delay: 0.3s;">
+                <div class="card-3d glass-strong rounded-3xl p-8 glow-accent">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary text-2xl">bar_chart</span>
+                            <div class="font-mono text-sm text-text-muted">Live Analytics Dashboard</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-neon-pink"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-neon-green"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="rounded-2xl bg-surface-elevated/60 p-4 border border-primary/10">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-primary text-lg">trending_up</span>
+                                <span class="font-mono text-xs text-text-muted">REVENUE</span>
+                            </div>
+                            <div class="font-display font-bold text-2xl text-primary">$2.4M</div>
+                            <div class="font-mono text-xs text-neon-green mt-1">+18.2%</div>
+                        </div>
+                        <div class="rounded-2xl bg-surface-elevated/60 p-4 border border-accent/10">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-accent text-lg">group</span>
+                                <span class="font-mono text-xs text-text-muted">USERS</span>
+                            </div>
+                            <div class="font-display font-bold text-2xl text-accent">14.8K</div>
+                            <div class="font-mono text-xs text-neon-green mt-1">+24.5%</div>
+                        </div>
+                        <div class="rounded-2xl bg-surface-elevated/60 p-4 border border-neon-pink/10">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-neon-pink text-lg">speed</span>
+                                <span class="font-mono text-xs text-text-muted">CONVERSION</span>
+                            </div>
+                            <div class="font-display font-bold text-2xl text-neon-pink">8.7%</div>
+                            <div class="font-mono text-xs text-neon-green mt-1">+3.1%</div>
+                        </div>
+                    </div>
+
+                    <!-- Bar Chart -->
+                    <div class="rounded-2xl bg-surface-elevated/40 p-6 border border-primary/10 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="font-display font-semibold text-sm">Monthly Performance</div>
+                            <div class="flex gap-4 text-xs font-mono text-text-muted">
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span>Actual</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-accent"></span>Projected</span>
+                            </div>
+                        </div>
+                        <div class="flex items-end justify-around gap-1 h-40">
+                            <div class="flex flex-col items-center gap-1 w-full">
+                                <div class="w-full bg-gradient-to-t from-primary/80 to-primary rounded-t" style="height:55%"></div>
+                                <div class="w-full bg-gradient-to-t from-accent/40 to-accent/60 rounded-t" style="height:45%"></div>
+                                <span class="font-mono text-[10px] text-text-muted mt-1">J</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 w-full">
+                                <div class="w-full bg-gradient-to-t from-primary/80 to-primary rounded-t" style="height:65%"></div>
+                                <div class="w-full bg-gradient-to-t from-accent/40 to-accent/60 rounded-t" style="height:55%"></div>
+                                <span class="font-mono text-[10px] text-text-muted mt-1">F</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 w-full">
+                                <div class="w-full bg-gradient-to-t from-primary/80 to-primary rounded-t" style="height:48%"></div>
+                                <div class="w-full bg-gradient-to-t from-accent/40 to-accent/60 rounded-t" style="height:60%"></div>
+                                <span class="font-mono text-[10px] text-text-muted mt-1">M</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 w-full">
+                                <div class="w-full bg-gradient-to-t from-primary/80 to-primary rounded-t" style="height:78%"></div>
+                                <div class="w-full bg-gradient-to-t from-accent/40 to-accent/60 rounded-t" style="height:65%"></div>
+                                <span class="font-mono text-[10px] text-text-muted mt-1">A</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 w-full">
+                                <div class="w-full bg-gradient-to-t from-primary/80 to-primary rounded-t" style="height:85%"></div>
+                                <div class="w-full bg-gradient-to-t from-accent/40 to-accent/60 rounded-t" style="height:72%"></div>
+                                <span class="font-mono text-[10px] text-text-muted mt-1">M</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 w-full">
+                                <div class="w-full bg-gradient-to-t from-primary/80 to-primary rounded-t" style="height:92%"></div>
+                                <div class="w-full bg-gradient-to-t from-accent/40 to-accent/60 rounded-t" style="height:80%"></div>
+                                <span class="font-mono text-[10px] text-text-muted mt-1">J</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 w-full">
+                                <div class="w-full bg-gradient-to-t from-neon-green/60 to-neon-green rounded-t" style="height:98%"></div>
+                                <div class="w-full bg-gradient-to-t from-accent/40 to-accent/60 rounded-t" style="height:85%"></div>
+                                <span class="font-mono text-[10px] text-text-muted mt-1">J</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="rounded-2xl bg-surface-elevated/40 border border-primary/10 overflow-hidden">
+                        <div class="px-5 py-3 border-b border-primary/10 flex items-center justify-between">
+                            <div class="font-display font-semibold text-sm">Top Metrics</div>
+                            <span class="material-symbols-outlined text-text-muted text-sm">more_horiz</span>
+                        </div>
+                        <div class="divide-y divide-primary/5">
+                            <div class="flex items-center justify-between px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-primary text-sm">show_chart</span>
+                                    <span class="font-body text-sm text-text-secondary">Customer Acquisition</span>
+                                </div>
+                                <div class="font-mono text-sm text-primary">+32%</div>
+                            </div>
+                            <div class="flex items-center justify-between px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-accent text-sm">pie_chart</span>
+                                    <span class="font-body text-sm text-text-secondary">Market Share</span>
+                                </div>
+                                <div class="font-mono text-sm text-accent">24.6%</div>
+                            </div>
+                            <div class="flex items-center justify-between px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-neon-green text-sm">donut_large</span>
+                                    <span class="font-body text-sm text-text-secondary">Retention Rate</span>
+                                </div>
+                                <div class="font-mono text-sm text-neon-green">94.2%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 px-6 md:px-16 relative overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="grid md:grid-cols-2 gap-16">
+                <div class="reveal">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
+                        <span class="material-symbols-outlined text-primary text-sm">connect_without_contact</span>
+                        <span class="font-mono text-xs text-primary tracking-widest">GET IN TOUCH</span>
+                    </div>
+                    <h2 class="font-display font-extrabold text-5xl md:text-6xl mb-8 leading-tight">
+                        Let's Create 
+                        <span class="gradient-text">Measurable Impact</span>
+                    </h2>
+                    <p class="font-body text-lg text-text-secondary mb-12 leading-relaxed">
+                        Ready to unlock your data's potential? We're here to transform your analytics challenges into competitive advantages.
+                    </p>
+
+                    <div class="space-y-8">
+                        <div class="flex items-start gap-6 group">
+                            <div class="w-14 h-14 rounded-2xl glass flex items-center justify-center group-hover:border-primary/50 transition-all">
+                                <span class="material-symbols-outlined text-primary">mail</span>
+                            </div>
+                            <div>
+                                <div class="font-mono text-xs text-text-muted uppercase tracking-widest mb-2">Email</div>
+                                <div class="font-body font-semibold text-lg">nexuraanalytics@gmail.com</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-6 group">
+                            <div class="w-14 h-14 rounded-2xl glass flex items-center justify-center group-hover:border-accent/50 transition-all">
+                                <span class="material-symbols-outlined text-accent">phone</span>
+                            </div>
+                            <div>
+                                <div class="font-mono text-xs text-text-muted uppercase tracking-widest mb-2">Phone</div>
+                                <div class="font-body font-semibold text-lg">0319 4999170</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-6 group">
+                            <div class="w-14 h-14 rounded-2xl glass flex items-center justify-center group-hover:border-neon-green/50 transition-all">
+                                <span class="material-symbols-outlined text-neon-green">location_on</span>
+                            </div>
+                            <div>
+                                <div class="font-mono text-xs text-text-muted uppercase tracking-widest mb-2">Location</div>
+                                <div class="font-body font-semibold text-lg">Lahore, Punjab, Pakistan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="reveal" style="transition-delay: 0.3s;">
+                    <div class="glass-strong rounded-3xl p-10">
+                        <form class="space-y-6" id="contact-form">
+                            <div>
+                                <label class="block font-mono text-xs text-text-muted uppercase tracking-widest mb-3">Project Type</label>
+                                <select class="w-full h-14 px-4 rounded-xl glass bg-transparent font-body text-text-primary focus:border-primary focus:outline-none transition-all">
+                                    <option>Full BI Dashboard Suite</option>
+                                    <option>Predictive Analytics Project</option>
+                                    <option>Data Engineering & Cleaning</option>
+                                    <option>Custom Analytics Solution</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block font-mono text-xs text-text-muted uppercase tracking-widest mb-3">Your Name</label>
+                                    <input type="text" class="w-full h-14 px-4 rounded-xl glass bg-transparent font-body text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none transition-all" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label class="block font-mono text-xs text-text-muted uppercase tracking-widest mb-3">Email</label>
+                                    <input type="email" class="w-full h-14 px-4 rounded-xl glass bg-transparent font-body text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none transition-all" placeholder="john@company.com">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-mono text-xs text-text-muted uppercase tracking-widest mb-3">Message</label>
+                                <textarea class="w-full p-4 rounded-xl glass bg-transparent font-body text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none transition-all resize-none" rows="5" placeholder="Tell us about your project..."></textarea>
+                            </div>
+
+                            <button type="submit" class="magnetic-btn w-full h-16 rounded-xl bg-gradient-to-r from-primary to-accent font-body font-bold text-white hover:shadow-[0_0_40px_rgba(0,212,255,0.5)] transition-all duration-300">
+                                Send Message
+                                <span class="material-symbols-outlined inline-block ml-2 align-middle">send</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 px-6 md:px-16 border-t border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="md:col-span-2">
+                    <a href="#home" class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-xl">neurology</span>
+                        </div>
+                        <span class="font-display font-bold text-xl tracking-tight">
+                            NEX<span class="text-primary">URA</span> <span class="text-text-secondary font-semibold">A N A L Y T I C S</span>
+                        </span>
+                    </a>
+                    <p class="font-body text-text-secondary max-w-md leading-relaxed">
+                        Transforming data into strategic intelligence. We empower businesses with actionable insights through advanced analytics and immersive visualizations.
+                    </p>
+                </div>
+
+                <div>
+                    <h5 class="font-mono text-xs text-text-muted uppercase tracking-widest mb-6">Quick Links</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#services" class="font-body text-text-secondary hover:text-primary transition-colors">Services</a></li>
+                        <li><a href="#workflow" class="font-body text-text-secondary hover:text-primary transition-colors">Workflow</a></li>
+                        <li><a href="#tools" class="font-body text-text-secondary hover:text-primary transition-colors">Technology</a></li>
+                        <li><a href="#contact" class="font-body text-text-secondary hover:text-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="font-mono text-xs text-text-muted uppercase tracking-widest mb-6">Connect</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="font-body text-text-secondary hover:text-primary transition-colors">LinkedIn</a></li>
+                        <li><a href="#" class="font-body text-text-secondary hover:text-primary transition-colors">Twitter</a></li>
+                        <li><a href="#" class="font-body text-text-secondary hover:text-primary transition-colors">GitHub</a></li>
+                        <li><a href="#" class="font-body text-text-secondary hover:text-primary transition-colors">Dribbble</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="font-body text-sm text-text-muted">© 2024 Nexura Analytics. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="font-body text-sm text-text-muted hover:text-primary transition-colors">Privacy Policy</a>
+                    <a href="#" class="font-body text-sm text-text-muted hover:text-primary transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // ============================================
+        // LIQUID ETHER BACKGROUND - Three.js WebGL Fluid
+        // ============================================
+        (function() {
+            const container = document.getElementById('liquid-ether-bg');
+            if (!container || typeof THREE === 'undefined') return;
+
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.zIndex = '0';
+            container.style.pointerEvents = 'none';
+            container.style.opacity = '0.7';
+
+            const colors = ['#00d4ff', '#7c3aed', '#ff006e'];
+            const mouseForce = 39;
+            const cursorSize = 140;
+            const isViscous = true;
+            const viscous = 30;
+            const iterationsViscous = 32;
+            const iterationsPoisson = 32;
+            const dt = 0.014;
+            const BFECC = true;
+            const resolution = 0.5;
+            const isBounce = true;
+            const autoDemo = true;
+            const autoSpeed = 0.35;
+            const autoIntensity = 2.2;
+            const takeoverDuration = 0.25;
+            const autoResumeDelay = 3000;
+            const autoRampDuration = 0.6;
+
+            const paletteTex = (function(stops) {
+                const arr = stops.length === 1 ? [stops[0], stops[0]] : stops;
+                const w = arr.length;
+                const data = new Uint8Array(w * 4);
+                for (let i = 0; i < w; i++) {
+                    const c = new THREE.Color(arr[i]);
+                    data[i * 4] = Math.round(c.r * 255);
+                    data[i * 4 + 1] = Math.round(c.g * 255);
+                    data[i * 4 + 2] = Math.round(c.b * 255);
+                    data[i * 4 + 3] = 255;
+                }
+                const tex = new THREE.DataTexture(data, w, 1, THREE.RGBAFormat);
+                tex.magFilter = THREE.LinearFilter;
+                tex.minFilter = THREE.LinearFilter;
+                tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+                tex.generateMipmaps = false;
+                tex.needsUpdate = true;
+                return tex;
+            })(colors);
+
+            const bgVec4 = new THREE.Vector4(0, 0, 0, 0);
+
+            const Common = {
+                width: 0, height: 0, aspect: 1, pixelRatio: 1,
+                container: null, renderer: null, clock: null, time: 0, delta: 0,
+                init(el) {
+                    this.container = el;
+                    this.pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+                    this.resize();
+                    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                    this.renderer.autoClear = false;
+                    this.renderer.setClearColor(0x000000, 0);
+                    this.renderer.setPixelRatio(this.pixelRatio);
+                    this.renderer.setSize(this.width, this.height);
+                    Object.assign(this.renderer.domElement.style, {
+                        width: '100%', height: '100%', display: 'block', position: 'absolute', top: '0', left: '0'
+                    });
+                    this.container.appendChild(this.renderer.domElement);
+                    this.clock = new THREE.Clock();
+                    this.clock.start();
+                },
+                resize() {
+                    if (!this.container) return;
+                    const r = this.container.getBoundingClientRect();
+                    this.width = Math.max(1, Math.floor(r.width));
+                    this.height = Math.max(1, Math.floor(r.height));
+                    this.aspect = this.width / this.height;
+                    if (this.renderer) this.renderer.setSize(this.width, this.height, false);
+                },
+                update() { this.delta = this.clock.getDelta(); this.time += this.delta; }
+            };
+
+            const Mouse = {
+                mouseMoved: false, coords: new THREE.Vector2(), coords_old: new THREE.Vector2(),
+                diff: new THREE.Vector2(), timer: null, container: null,
+                isHoverInside: false, hasUserControl: false, isAutoActive: false,
+                autoIntensity: 2.0, takeoverActive: false, takeoverStartTime: 0,
+                takeoverDuration: 0.25, takeoverFrom: new THREE.Vector2(), takeoverTo: new THREE.Vector2(),
+                onInteract: null,
+                init(el) {
+                    this.container = el;
+                    window.addEventListener('mousemove', (e) => this.onMouseMove(e));
+                    window.addEventListener('touchstart', (e) => this.onTouch(e), { passive: true });
+                    window.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: true });
+                    window.addEventListener('touchend', () => { this.isHoverInside = false; });
+                },
+                isInside(cx, cy) {
+                    if (!this.container) return false;
+                    const r = this.container.getBoundingClientRect();
+                    return cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom;
+                },
+                setCoords(x, y) {
+                    if (!this.container) return;
+                    if (this.timer) clearTimeout(this.timer);
+                    const r = this.container.getBoundingClientRect();
+                    if (r.width === 0 || r.height === 0) return;
+                    this.coords.set((x - r.left) / r.width * 2 - 1, -((y - r.top) / r.height * 2 - 1));
+                    this.mouseMoved = true;
+                    this.timer = setTimeout(() => { this.mouseMoved = false; }, 100);
+                },
+                setNormalized(nx, ny) { this.coords.set(nx, ny); this.mouseMoved = true; },
+                onMouseMove(e) {
+                    if (!this.isInside(e.clientX, e.clientY)) return;
+                    if (this.onInteract) this.onInteract();
+                    if (this.isAutoActive && !this.hasUserControl && !this.takeoverActive) {
+                        const r = this.container.getBoundingClientRect();
+                        this.takeoverFrom.copy(this.coords);
+                        this.takeoverTo.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height * 2 - 1));
+                        this.takeoverStartTime = performance.now();
+                        this.takeoverActive = true;
+                        this.hasUserControl = true;
+                        this.isAutoActive = false;
+                        return;
+                    }
+                    this.setCoords(e.clientX, e.clientY);
+                    this.hasUserControl = true;
+                },
+                onTouch(e) { if (e.touches.length === 1) { this.setCoords(e.touches[0].clientX, e.touches[0].clientY); this.hasUserControl = true; } },
+                onTouchMove(e) { if (e.touches.length === 1) { this.setCoords(e.touches[0].clientX, e.touches[0].clientY); } },
+                update() {
+                    if (this.takeoverActive) {
+                        const t = (performance.now() - this.takeoverStartTime) / (this.takeoverDuration * 1000);
+                        if (t >= 1) { this.takeoverActive = false; this.coords.copy(this.takeoverTo); this.coords_old.copy(this.coords); this.diff.set(0, 0); }
+                        else { const k = t * t * (3 - 2 * t); this.coords.copy(this.takeoverFrom).lerp(this.takeoverTo, k); }
+                    }
+                    this.diff.subVectors(this.coords, this.coords_old);
+                    this.coords_old.copy(this.coords);
+                    if (this.coords_old.x === 0 && this.coords_old.y === 0) this.diff.set(0, 0);
+                    if (this.isAutoActive && !this.takeoverActive) this.diff.multiplyScalar(this.autoIntensity);
+                }
+            };
+
+            const face_vert = `attribute vec3 position;uniform vec2 px;uniform vec2 boundarySpace;varying vec2 uv;precision highp float;void main(){vec3 pos=position;vec2 s=1.0-boundarySpace*2.0;pos.xy*=s;uv=0.5+pos.xy*0.5;gl_Position=vec4(pos,1.0);}`;
+            const line_vert = `attribute vec3 position;uniform vec2 px;precision highp float;varying vec2 uv;void main(){vec3 pos=position;uv=0.5+pos.xy*0.5;vec2 n=sign(pos.xy);pos.xy=abs(pos.xy)-px;pos.xy*=n;gl_Position=vec4(pos,1.0);}`;
+            const mouse_vert = `precision highp float;attribute vec3 position;attribute vec2 uv;uniform vec2 center;uniform vec2 scale;uniform vec2 px;varying vec2 vUv;void main(){vec2 pos=pos.xy*scale*2.0*px+center;vUv=uv;gl_Position=vec4(pos,0.0,1.0);}`;
+
+            const advection_frag = `precision highp float;uniform sampler2D velocity;uniform float dt;uniform bool isBFECC;uniform vec2 fboSize;uniform vec2 px;varying vec2 uv;void main(){vec2 ratio=max(fboSize.x,fboSize.y)/fboSize;if(!isBFECC){vec2 v=texture2D(velocity,uv).xy;gl_FragColor=vec4(texture2D(velocity,uv-v*dt*ratio).xy,0,0);}else{vec2 sn=uv;vec2 vo=texture2D(velocity,uv).xy;vec2 sp=sn-vo*dt*ratio;vec2 vn=texture2D(velocity,sp).xy;vec2 s2=sp+vn*dt*ratio;vec2 err=s2-sn;vec2 s3=sn-err/2.0;vec2 v2=texture2D(velocity,s3).xy;vec2 sp2=s3-v2*dt*ratio;gl_FragColor=vec4(texture2D(velocity,sp2).xy,0,0);}}`;
+            const color_frag = `precision highp float;uniform sampler2D velocity;uniform sampler2D palette;uniform vec4 bgColor;varying vec2 uv;void main(){vec2 v=texture2D(velocity,uv).xy;float l=clamp(length(v),0.,1.);vec3 c=texture2D(palette,vec2(l,0.5)).rgb;gl_FragColor=vec4(mix(bgColor.rgb,c,l),mix(bgColor.a,1.,l));}`;
+            const divergence_frag = `precision highp float;uniform sampler2D velocity;uniform float dt;uniform vec2 px;varying vec2 uv;void main(){float x0=texture2D(velocity,uv-vec2(px.x,0.)).x;float x1=texture2D(velocity,uv+vec2(px.x,0.)).x;float y0=texture2D(velocity,uv-vec2(0.,px.y)).y;float y1=texture2D(velocity,uv+vec2(0.,px.y)).y;gl_FragColor=vec4((x1-x0+y1-y0)/2./dt);}`;
+            const externalForce_frag = `precision highp float;uniform vec2 force;uniform vec2 center;uniform vec2 scale;uniform vec2 px;varying vec2 vUv;void main(){vec2 c=(vUv-0.5)*2.;float d=1.-min(length(c),1.);d*=d;gl_FragColor=vec4(force*d,0.,1.);}`;
+            const poisson_frag = `precision highp float;uniform sampler2D pressure;uniform sampler2D divergence;uniform vec2 px;varying vec2 uv;void main(){float p0=texture2D(pressure,uv+vec2(px.x*2.,0.)).r;float p1=texture2D(pressure,uv-vec2(px.x*2.,0.)).r;float p2=texture2D(pressure,uv+vec2(0.,px.y*2.)).r;float p3=texture2D(pressure,uv-vec2(0.,px.y*2.)).r;float div=texture2D(divergence,uv).r;gl_FragColor=vec4((p0+p1+p2+p3)/4.-div);}`;
+            const pressure_frag = `precision highp float;uniform sampler2D pressure;uniform sampler2D velocity;uniform vec2 px;uniform float dt;varying vec2 uv;void main(){float s=1.;float p0=texture2D(pressure,uv+vec2(px.x*s,0.)).r;float p1=texture2D(pressure,uv-vec2(px.x*s,0.)).r;float p2=texture2D(pressure,uv+vec2(0.,px.y*s)).r;float p3=texture2D(pressure,uv-vec2(0.,px.y*s)).r;vec2 v=texture2D(velocity,uv).xy;v-=vec2(p0-p1,p2-p3)*.5*dt;gl_FragColor=vec4(v,0.,1.);}`;
+            const viscous_frag = `precision highp float;uniform sampler2D velocity;uniform sampler2D velocity_new;uniform float v;uniform vec2 px;uniform float dt;varying vec2 uv;void main(){vec2 o=texture2D(velocity,uv).xy;vec2 n0=texture2D(velocity_new,uv+vec2(px.x*2.,0.)).xy;vec2 n1=texture2D(velocity_new,uv-vec2(px.x*2.,0.)).xy;vec2 n2=texture2D(velocity_new,uv+vec2(0.,px.y*2.)).xy;vec2 n3=texture2D(velocity_new,uv-vec2(0.,px.y*2.)).xy;vec2 nv=4.*o+v*dt*(n0+n1+n2+n3);nv/=4.*(1.+v*dt);gl_FragColor=vec4(nv,0.,0.);}`;
+
+            function createFBO(w, h) {
+                const isIOS = /(iPad|iPhone|iPod)/i.test(navigator.userAgent);
+                return new THREE.WebGLRenderTarget(w, h, {
+                    type: isIOS ? THREE.HalfFloatType : THREE.FloatType,
+                    depthBuffer: false, stencilBuffer: false,
+                    minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+                    wrapS: THREE.ClampToEdgeWrapping, wrapT: THREE.ClampToEdgeWrapping
+                });
+            }
+
+            class ShaderPass {
+                constructor(mat, output) {
+                    this.output = output;
+                    this.scene = new THREE.Scene();
+                    this.camera = new THREE.Camera();
+                    this.material = new THREE.RawShaderMaterial(mat);
+                    this.scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.material));
+                }
+                update(rt) {
+                    Common.renderer.setRenderTarget(rt || null);
+                    Common.renderer.render(this.scene, this.camera);
+                    Common.renderer.setRenderTarget(null);
+                }
+            }
+
+            let sim, output, autoDriver, running = true, rafId;
+            let lastUserInteraction = performance.now();
+
+            function initSimulation() {
+                Common.init(container);
+                Mouse.init(container);
+                Mouse.autoIntensity = autoIntensity;
+                Mouse.takeoverDuration = takeoverDuration;
+                Mouse.onInteract = () => { lastUserInteraction = performance.now(); if (autoDriver) autoDriver.active = false; };
+
+                const w = Math.max(1, Math.round(resolution * Common.width));
+                const h = Math.max(1, Math.round(resolution * Common.height));
+                const px = new THREE.Vector2(1 / w, 1 / h);
+                const fboSize = new THREE.Vector2(w, h);
+
+                const fbos = {
+                    vel_0: createFBO(w, h), vel_1: createFBO(w, h),
+                    vel_v0: createFBO(w, h), vel_v1: createFBO(w, h),
+                    div: createFBO(w, h),
+                    pr_0: createFBO(w, h), pr_1: createFBO(w, h)
+                };
+
+                const advection = new ShaderPass({
+                    vertexShader: face_vert, fragmentShader: advection_frag,
+                    uniforms: {
+                        boundarySpace: { value: px }, px: { value: px },
+                        fboSize: { value: fboSize }, velocity: { value: fbos.vel_0.texture },
+                        dt: { value: dt }, isBFECC: { value: BFECC }
+                    }
+                }, fbos.vel_1);
+
+                // boundary line
+                const bg = new THREE.BufferGeometry();
+                bg.setAttribute('position', new THREE.BufferAttribute(new Float32Array([-1,-1,0,-1,1,0,-1,1,0,1,1,0,1,1,0,1,-1,0,1,-1,0,-1,-1,0]), 3));
+                const bl = new THREE.LineSegments(bg, new THREE.RawShaderMaterial({ vertexShader: line_vert, fragmentShader: advection_frag, uniforms: advection.material.uniforms }));
+                advection.scene.add(bl);
+                if (isBounce) bl.visible = false;
+
+                const extForce = new ShaderPass({
+                    vertexShader: mouse_vert, fragmentShader: externalForce_frag,
+                    blending: THREE.AdditiveBlending, depthWrite: false,
+                    uniforms: {
+                        px: { value: px }, force: { value: new THREE.Vector2() },
+                        center: { value: new THREE.Vector2() }, scale: { value: new THREE.Vector2(cursorSize, cursorSize) }
+                    }
+                }, fbos.vel_1);
+
+                const viscousMat = new THREE.RawShaderMaterial({
+                    vertexShader: face_vert, fragmentShader: viscous_frag,
+                    uniforms: {
+                        boundarySpace: { value: px }, velocity: { value: fbos.vel_1.texture },
+                        velocity_new: { value: fbos.vel_v0.texture }, v: { value: viscous },
+                        px: { value: px }, dt: { value: dt }
+                    }
+                });
+                const viscousScene = new THREE.Scene();
+                viscousScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), viscousMat));
+
+                const divPass = new ShaderPass({
+                    vertexShader: face_vert, fragmentShader: divergence_frag,
+                    uniforms: {
+                        boundarySpace: { value: px }, velocity: { value: fbos.vel_v0.texture },
+                        px: { value: px }, dt: { value: dt }
+                    }
+                }, fbos.div);
+
+                const poissonMat = new THREE.RawShaderMaterial({
+                    vertexShader: face_vert, fragmentShader: poisson_frag,
+                    uniforms: {
+                        boundarySpace: { value: px }, pressure: { value: fbos.pr_0.texture },
+                        divergence: { value: fbos.div.texture }, px: { value: px }
+                    }
+                });
+                const poissonScene = new THREE.Scene();
+                poissonScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), poissonMat));
+
+                const pressurePass = new ShaderPass({
+                    vertexShader: face_vert, fragmentShader: pressure_frag,
+                    uniforms: {
+                        boundarySpace: { value: px }, pressure: { value: fbos.pr_0.texture },
+                        velocity: { value: fbos.vel_v0.texture }, px: { value: px }, dt: { value: dt }
+                    }
+                }, fbos.vel_0);
+
+                autoDriver = {
+                    active: false, current: new THREE.Vector2(0, 0), target: new THREE.Vector2(),
+                    lastTime: performance.now(), activationTime: 0, margin: 0.2, _d: new THREE.Vector2(),
+                    pick() { this.target.set((Math.random() * 2 - 1) * (1 - this.margin), (Math.random() * 2 - 1) * (1 - this.margin)); },
+                    forceStop() { this.active = false; Mouse.isAutoActive = false; },
+                    update() {
+                        if (!autoDemo) return;
+                        const now = performance.now();
+                        if (now - lastUserInteraction < autoResumeDelay) { if (this.active) this.forceStop(); return; }
+                        if (Mouse.isHoverInside) { if (this.active) this.forceStop(); return; }
+                        if (!this.active) { this.active = true; this.current.copy(Mouse.coords); this.lastTime = now; this.activationTime = now; }
+                        Mouse.isAutoActive = true;
+                        let ds = (now - this.lastTime) / 1000; this.lastTime = now; if (ds > 0.2) ds = 0.016;
+                        const dir = this._d.subVectors(this.target, this.current);
+                        const dist = dir.length(); if (dist < 0.01) { this.pick(); return; }
+                        dir.normalize();
+                        let ramp = 1;
+                        if (autoRampDuration > 0) { const t2 = Math.min(1, (now - this.activationTime) / (autoRampDuration * 1000)); ramp = t2 * t2 * (3 - 2 * t2); }
+                        this.current.addScaledVector(dir, Math.min(autoSpeed * ds * ramp, dist));
+                        Mouse.setNormalized(this.current.x, this.current.y);
+                    }
+                };
+                autoDriver.pick();
+
+                const outputScene = new THREE.Scene();
+                const outputCamera = new THREE.Camera();
+                const outputMesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.RawShaderMaterial({
+                    vertexShader: face_vert, fragmentShader: color_frag, transparent: true, depthWrite: false,
+                    uniforms: {
+                        velocity: { value: fbos.vel_0.texture },
+                        boundarySpace: { value: new THREE.Vector2() },
+                        palette: { value: paletteTex },
+                        bgColor: { value: bgVec4 }
+                    }
+                }));
+                outputScene.add(outputMesh);
+
+                function runViscous() {
+                    let fin = fbos.vel_v0, fout = fbos.vel_v1;
+                    viscousMat.uniforms.v.value = viscous;
+                    for (let i = 0; i < iterationsViscous; i++) {
+                        if (i % 2 === 1) { fin = fbos.vel_v1; fout = fbos.vel_v0; }
+                        viscousMat.uniforms.velocity_new.value = fin.texture;
+                        viscousMat.uniforms.dt.value = dt;
+                        Common.renderer.setRenderTarget(fout);
+                        Common.renderer.render(viscousScene, outputCamera);
+                        Common.renderer.setRenderTarget(null);
+                    }
+                    return fout;
+                }
+
+                function runPoisson() {
+                    let pin = fbos.pr_0, pout = fbos.pr_1;
+                    for (let i = 0; i < iterationsPoisson; i++) {
+                        if (i % 2 === 1) { pin = fbos.pr_1; pout = fbos.pr_0; }
+                        poissonMat.uniforms.pressure.value = pin.texture;
+                        Common.renderer.setRenderTarget(pout);
+                        Common.renderer.render(poissonScene, outputCamera);
+                        Common.renderer.setRenderTarget(null);
+                    }
+                    return pout;
+                }
+
+                function simulate() {
+                    advection.material.uniforms.dt.value = dt;
+                    advection.material.uniforms.isBFECC.value = BFECC;
+                    advection.update(fbos.vel_1);
+
+                    const fx = (Mouse.diff.x / 2) * mouseForce;
+                    const fy = (Mouse.diff.y / 2) * mouseForce;
+                    const csx = cursorSize * px.x, csy = cursorSize * px.y;
+                    const cx = Math.min(Math.max(Mouse.coords.x, -1 + csx + px.x * 2), 1 - csx - px.x * 2);
+                    const cy = Math.min(Math.max(Mouse.coords.y, -1 + csy + px.y * 2), 1 - csy - px.y * 2);
+                    const eu = extForce.material.uniforms;
+                    eu.force.value.set(fx, fy); eu.center.value.set(cx, cy); eu.scale.value.set(cursorSize, cursorSize);
+                    extForce.update(fbos.vel_1);
+
+                    let vel = fbos.vel_1;
+                    if (isViscous) vel = runViscous();
+
+                    divPass.material.uniforms.velocity.value = vel.texture;
+                    divPass.update(fbos.div);
+
+                    const pressure = runPoisson();
+                    pressurePass.material.uniforms.velocity.value = vel.texture;
+                    pressurePass.material.uniforms.pressure.value = pressure.texture;
+                    pressurePass.update(fbos.vel_0);
+                }
+
+                function animate() {
+                    if (!running) return;
+                    autoDriver.update();
+                    Mouse.update();
+                    Common.update();
+                    simulate();
+                    Common.renderer.setRenderTarget(null);
+                    Common.renderer.render(outputScene, outputCamera);
+                    rafId = requestAnimationFrame(animate);
+                }
+
+                animate();
+
+                // Resize
+                const ro = new ResizeObserver(() => {
+                    Common.resize();
+                    const nw = Math.max(1, Math.round(resolution * Common.width));
+                    const nh = Math.max(1, Math.round(resolution * Common.height));
+                    const npx = new THREE.Vector2(1 / nw, 1 / nh);
+                    const nfbo = new THREE.Vector2(nw, nh);
+                    for (const k in fbos) fbos[k].setSize(nw, nh);
+                    // Update uniforms
+                    [advection, divPass, pressurePass].forEach(p => {
+                        p.material.uniforms.px.value = npx;
+                        p.material.uniforms.boundarySpace.value = npx;
+                    });
+                    advection.material.uniforms.fboSize.value = nfbo;
+                    extForce.material.uniforms.px.value = npx;
+                    viscousMat.uniforms.px.value = npx;
+                    viscousMat.uniforms.boundarySpace.value = npx;
+                    poissonMat.uniforms.px.value = npx;
+                    poissonMat.uniforms.boundarySpace.value = npx;
+                    pressurePass.material.uniforms.px.value = npx;
+                    pressurePass.material.uniforms.boundarySpace.value = npx;
+                });
+                ro.observe(container);
+
+                // Visibility
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) { running = false; if (rafId) cancelAnimationFrame(rafId); }
+                    else { running = true; animate(); }
+                });
+            }
+
+            initSimulation();
+        })();
+        // Cursor Trail
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+        });
+
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOnScroll = () => {
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+
+        // Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        const animateCounter = (counter) => {
+            const target = +counter.getAttribute('data-target');
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+
+            const updateCounter = () => {
+                current += increment;
+                if (current < target) {
+                    counter.innerText = Math.ceil(current);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.innerText = target + (target === 98 ? '%' : '+');
+                }
+            };
+
+            updateCounter();
+        };
+
+        // Trigger counter animation on scroll
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => observer.observe(counter));
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar Background on Scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('glass-strong');
+            } else {
+                navbar.classList.remove('glass-strong');
+            }
+        });
+
+        // Magnetic Button Effect
+        const magneticBtns = document.querySelectorAll('.magnetic-btn');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Form Submission
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Create success notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-24 right-8 glass-strong px-8 py-6 rounded-2xl z-50';
+            notification.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined text-neon-green text-3xl">check_circle</span>
+                    <div>
+                        <div class="font-display font-bold text-lg">Message Sent!</div>
+                        <div class="font-body text-sm text-text-secondary">We'll get back to you within 24 hours.</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Remove notification after 4 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                notification.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
+            
+            e.target.reset();
+        });
+
+        // 3D Card Tilt Effect
+        const cards3D = document.querySelectorAll('.card-3d');
+        cards3D.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                
+                const rotateX = (y - 0.5) * -15;
+                const rotateY = (x - 0.5) * 15;
+                
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+            });
+        });
+
+        // Typing Effect for Hero (Optional Enhancement)
+        const heroTitle = document.querySelector('#home h1');
+        if (heroTitle) {
+            heroTitle.style.opacity = '1';
+        }
+
+        // Logo Loop Initialization
+        const logoData = [
+            { name: 'TechFlow', icon: '≋' },
+            { name: 'DataSync', icon: '◈' },
+            { name: 'CloudBase', icon: '☁' },
+            { name: 'NeuralPath', icon: '◉' },
+            { name: 'QuantumAI', icon: '⬡' },
+            { name: 'InsightLab', icon: '◐' },
+            { name: 'MetaCore', icon: '◆' },
+            { name: 'DataStream', icon: '▤' },
+            { name: 'AnalytixPro', icon: '◧' }
+        ];
+
+        function createLogoItem(logo) {
+            const item = document.createElement('div');
+            item.className = 'logo-loop-item';
+            item.setAttribute('role', 'listitem');
+            item.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 28px; margin-right: 12px;">${logo.icon === '≋' ? 'waves' : logo.icon === '◈' ? 'hexagon' : logo.icon === '☁' ? 'cloud' : logo.icon === '◉' ? 'neurology' : logo.icon === '⬡' ? 'hub' : logo.icon === '◐' ? 'pie_chart' : logo.icon === '◆' ? 'change_history' : logo.icon === '▤' ? 'view_comfy_alt' : 'view_module'}</span>
+                <span class="logo-text">${logo.name}</span>
+            `;
+            return item;
+        }
+
+        function initializeLogoLoop(containerId, logos) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            // Create logos (original + duplicated for seamless loop)
+            const allLogos = [...logos, ...logos];
+
+            allLogos.forEach(logo => {
+                container.appendChild(createLogoItem(logo));
+            });
+        }
+
+        // Initialize both logo loops
+        initializeLogoLoop('logo-loop-1', logoData);
+        initializeLogoLoop('logo-loop-2', [...logoData].reverse());
+
+        // Pause on hover
+        const logoTracks = document.querySelectorAll('.logo-loop-list');
+        logoTracks.forEach(track => {
+            track.addEventListener('mouseenter', () => {
+                track.classList.add('paused');
+            });
+            track.addEventListener('mouseleave', () => {
+                track.classList.remove('paused');
+            });
+        });
+    </script>
+</body>
+</html>
