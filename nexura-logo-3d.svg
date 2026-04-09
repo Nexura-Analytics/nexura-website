@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" class="nexura-3d-logo">
+  <defs>
+    <!-- Gradients matching website theme -->
+    <linearGradient id="barGrad1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00a8cc;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="barGrad2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="barGrad3" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="barGrad4" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff006e;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Node glow -->
+    <radialGradient id="nodeGlow1">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="nodeGlow2">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="nodeGlow3">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="nodeGlow4">
+      <stop offset="0%" style="stop-color:#ff006e;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#ff006e;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- 3D shadow -->
+    <filter id="barShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00d4ff" flood-opacity="0.3"/>
+    </filter>
+    <filter id="nodeShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#00d4ff" flood-opacity="0.5"/>
+    </filter>
+    <filter id="lineGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Animated background pulse -->
+  <circle cx="200" cy="180" r="120" fill="none" stroke="url(#barGrad2)" stroke-width="0.5" opacity="0.2">
+    <animate attributeName="r" values="110;130;110" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.1;0.3;0.1" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="200" cy="180" r="100" fill="none" stroke="url(#barGrad2)" stroke-width="0.5" opacity="0.15">
+    <animate attributeName="r" values="95;115;95" dur="4s" begin="1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.05;0.2;0.05" dur="4s" begin="1s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Chart bars with 3D effect -->
+  <g filter="url(#barShadow)" class="bars-group">
+    <!-- Bar 1 -->
+    <rect x="105" y="160" width="40" height="80" rx="8" fill="url(#barGrad1)" opacity="0.85">
+      <animate attributeName="height" values="75;85;75" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="165;155;165" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="105" y="240" width="40" height="4" rx="2" fill="#00d4ff" opacity="0.3"/>
+
+    <!-- Bar 2 -->
+    <rect x="160" y="110" width="40" height="130" rx="8" fill="url(#barGrad2)" opacity="0.9">
+      <animate attributeName="height" values="125;135;125" dur="3s" begin="0.3s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="115;105;115" dur="3s" begin="0.3s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="160" y="240" width="40" height="4" rx="2" fill="#00d4ff" opacity="0.3"/>
+
+    <!-- Bar 3 -->
+    <rect x="215" y="140" width="40" height="100" rx="8" fill="url(#barGrad3)" opacity="0.85">
+      <animate attributeName="height" values="95;105;95" dur="3s" begin="0.6s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="145;135;145" dur="3s" begin="0.6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="215" y="240" width="40" height="4" rx="2" fill="#7c3aed" opacity="0.3"/>
+
+    <!-- Bar 4 -->
+    <rect x="270" y="70" width="40" height="170" rx="8" fill="url(#barGrad4)" opacity="0.95">
+      <animate attributeName="height" values="165;175;165" dur="3s" begin="0.9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="75;65;75" dur="3s" begin="0.9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="270" y="240" width="40" height="4" rx="2" fill="#ff006e" opacity="0.3"/>
+  </g>
+
+  <!-- Connection line with glow -->
+  <polyline 
+    points="125,155 180,105 235,135 290,65" 
+    fill="none" 
+    stroke="url(#barGrad2)" 
+    stroke-width="3" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+    filter="url(#lineGlow)"
+    opacity="0.9"
+  >
+    <animate attributeName="stroke-dasharray" values="0,500;500,0" dur="2s" fill="freeze"/>
+  </polyline>
+
+  <!-- Animated dots on line -->
+  <circle cx="125" cy="155" r="12" fill="url(#nodeGlow1)">
+    <animate attributeName="r" values="10;14;10" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="125" cy="155" r="8" fill="#00d4ff" filter="url(#nodeShadow)">
+    <animate attributeName="r" values="7;9;7" dur="2s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="180" cy="105" r="12" fill="url(#nodeGlow2)">
+    <animate attributeName="r" values="10;14;10" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="180" cy="105" r="8" fill="#00d4ff" filter="url(#nodeShadow)">
+    <animate attributeName="r" values="7;9;7" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="235" cy="135" r="12" fill="url(#nodeGlow3)">
+    <animate attributeName="r" values="10;14;10" dur="2s" begin="0.6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="235" cy="135" r="8" fill="#7c3aed" filter="url(#nodeShadow)">
+    <animate attributeName="r" values="7;9;7" dur="2s" begin="0.6s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="290" cy="65" r="14" fill="url(#nodeGlow4)">
+    <animate attributeName="r" values="12;16;12" dur="2s" begin="0.9s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="290" cy="65" r="9" fill="#ff006e" filter="url(#nodeShadow)">
+    <animate attributeName="r" values="8;10;8" dur="2s" begin="0.9s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Floating particles -->
+  <circle cx="150" cy="80" r="2" fill="#00d4ff" opacity="0.6">
+    <animate attributeName="cy" values="80;60;80" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="260" cy="90" r="1.5" fill="#7c3aed" opacity="0.5">
+    <animate attributeName="cy" values="90;70;90" dur="4s" begin="1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.2;0.7;0.2" dur="4s" begin="1s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="100" cy="200" r="1.5" fill="#00ff9c" opacity="0.4">
+    <animate attributeName="cy" values="200;180;200" dur="3.5s" begin="0.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3.5s" begin="0.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="310" cy="180" r="2" fill="#ff006e" opacity="0.5">
+    <animate attributeName="cy" values="180;160;180" dur="4s" begin="1.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="4s" begin="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="200" cy="50" r="1.5" fill="#00d4ff" opacity="0.4">
+    <animate attributeName="cy" values="50;35;50" dur="3s" begin="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" begin="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
